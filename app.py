@@ -35,7 +35,6 @@ else:
   if names:
     st.sidebar.title('DATA FILTERS')
     option = st.sidebar.selectbox('What would you like to view?', names)
-    st.write('You selected:', option)
     selected_file=""
     for x in uploaded_files:
       if x.name==option:
@@ -53,15 +52,19 @@ else:
       else:
         freq[x]=1
 
-    fig = go.Figure(
-    go.Pie(
-    labels = list(freq.keys()),
-    values = list(freq.values()),
-    hoverinfo = "label+percent",
-    textinfo = "percent"))
-
     st.header("Pie chart for "+att)
-    st.plotly_chart(fig)
+
+    if len(freq) > 30:
+      st.warning("Warning, So many values to display. Please select any other attribute !!!")
+    else:
+      fig = go.Figure(
+      go.Pie(
+      labels = list(freq.keys()),
+      values = list(freq.values()),
+      hoverinfo = "label+percent",
+      textinfo = "percent"))
+
+      st.plotly_chart(fig)
     
     
     #query = f"selected_file=='{cols}'"
@@ -69,6 +72,9 @@ else:
     
     #if st.checkbox("Show Summary of Dataset"):    
     
-    st.area_chart(cols)
+    # st.area_chart(cols)
   
     #X = st.sidebar.multiselect('Choose position:', positions, default=positions)
+    
+    
+    # conn.close()
