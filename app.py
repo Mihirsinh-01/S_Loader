@@ -28,7 +28,15 @@ else:
     names.append(uploaded_file.name)
     st.write("Uploaded Filename:", uploaded_file.name)
     dataframe = pd.read_excel(uploaded_file)
-    # Inserting Dataframe directly to MySQL server.
+    
+    #removing NULL records
+    for col in dataframe:
+      dataframe.dropna(subset=[col], inplace=True)
+    dataframe.reset_index()
+    #remove Duplicates
+    dataframe.drop_duplicates(keep='first', inplace=True)
+
+    # Inserting Dataframe to MySQL server.
     dataframe.to_sql(con=conn,name=uploaded_file.name.split(".")[0],if_exists="replace")
     st.write(dataframe)
 
@@ -42,6 +50,7 @@ else:
         break
     df=pd.read_excel(selected_file)
     #df.drop("<NA>", axis=1, inplace=True)
+
     cols=df.columns.values.tolist()
     att=st.sidebar.selectbox("Select the attribute .. ", cols)
     data=df[att]
@@ -66,15 +75,3 @@ else:
 
       st.plotly_chart(fig)
     
-    
-    #query = f"selected_file=='{cols}'"
-    #df_filtered = df.query(query)
-    
-    #if st.checkbox("Show Summary of Dataset"):    
-    
-    # st.area_chart(cols)
-  
-    #X = st.sidebar.multiselect('Choose position:', positions, default=positions)
-    
-    
-    # conn.close()
